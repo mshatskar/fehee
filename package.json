@@ -1,0 +1,23 @@
+{
+    "name": "my-telegram-bot",
+    "version": "1.0.0",
+    "description": "A simple Telegram bot using Node.js",
+    "main": "bot.js",
+    "scripts": {
+        "start": "node bot.js"
+    },
+    "dependencies": {
+        "@solana/web3.js": "^1.31.0",
+        "axios": "^1.5.0",
+        "dotenv": "^10.0.0",
+        "node-fetch": "^3.3.2",
+        "node-telegram-bot-api": "^0.55.0",
+        "package.json": "^2.0.1",
+        "redis": "^4.0.0"
+    },
+    "engines": {
+        "node": ">=14.0.0"
+    },
+    "author": "Your Name",
+    "license": "MIT"
+}

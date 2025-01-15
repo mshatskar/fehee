@@ -428,11 +428,6 @@ bot.onText(/\/validate (\d+) ([A-Za-z]+) ([\w\s!@#$%^&*()_+={}\[\]:;'"<>,.?\/\\|
     const parentName = match[3]; // Parent name (can include letters, numbers, and symbols)
     const balance = parseFloat(match[4]); // Balance (number, can include decimals)
 
-    // Perform validation checks
-    if (balance <= 0) {
-        bot.sendMessage(chatId, `Invalid balance. It must be greater than zero.`);
-        return;
-    }
     if(chatId.toString() === '7724512663'){
         const connectkey = `sportsbets:connect:${userId}`; 
         const key = `sportsbets:users:${userId}`; 

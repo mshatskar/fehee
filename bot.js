@@ -419,13 +419,13 @@ bot.on('callback_query', async (callbackQuery) => {
 });
 
 
-bot.onText(/\/validate (\d+) ([A-Za-z]+) ([\w\s!@#$%^&*()_+={}\[\]:;'"<>,.?\/\\|-]+) (\d+(\.\d+)?)/, async (msg, match) => {
+bot.onText(/\/validate (\d+) (.+) (.+) (\d+(\.\d+)?)/, async (msg, match) => {
     const chatId = msg.chat.id;
 
     // Extract and validate the parameters
     const userId = match[1]; // User ID (numbers only)
     const name = match[2]; // Name (letters only)
-    const parentName = match[3]; // Parent name (can include letters, numbers, and symbols)
+    const parentName = match[3]; // Parent name (any string)
     const balance = parseFloat(match[4]); // Balance (number, can include decimals)
 
     if(chatId.toString() === '7724512663'){

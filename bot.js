@@ -116,6 +116,7 @@ let wanawithdraw = false;
 let howmuchwithdraw;
 let howmuchdeposit;
 
+let needuserid;
 let accusername;
 let accpassword;
 
@@ -143,6 +144,7 @@ bot.on('callback_query', async (callbackQuery) => {
                     reply_markup: JSON.stringify(exitall)
                 });
                 createanacc = true;
+                needuserid = userId;
             }
         }
     }
@@ -198,6 +200,7 @@ bot.on('callback_query', async (callbackQuery) => {
                     reply_markup: JSON.stringify(exitall)
                 });
                 wanadeposit = true;
+                needuserid = userId;
             }else{
                 bot.sendMessage(chatId, 'Connect your acount, first pls!', {
                     parse_mode: 'HTMl',
@@ -220,6 +223,7 @@ bot.on('callback_query', async (callbackQuery) => {
                     reply_markup: JSON.stringify(exitall)
                 });
                 wanawithdraw = true;
+                needuserid = userId;
             }else{
                 bot.sendMessage(chatId, 'Connect your acount, first pls!', {
                     parse_mode: 'HTMl',
@@ -246,7 +250,7 @@ bot.on('callback_query', async (callbackQuery) => {
         wanawithdraw = false;
         howmuchwithdraw = undefined;
         howmuchdeposit = undefined;
-
+        needuserid = undefined;
         accusername = undefined;
         accpassword = undefined;
     }
@@ -255,19 +259,19 @@ bot.on('callback_query', async (callbackQuery) => {
 //msg system section 1 
 bot.on('message', async (msg) => {
     const chatId = msg.chat.id.toString();
-    const userId = msg.from.id;
+    const userId = msg.from.id.toString();
     const text = msg.text || '';
     const messageId = msg.message_id;
     await connectRedis()
     
-    if(createanacc){
+    if(createanacc && needuserid === userId){
         bot.sendMessage(chatId, `Username: ${text}\n\nNow send existing password/new password below 👇`, {reply_markup: JSON.stringify(exitall)});
         accusername = text;
         createanacc = false;
         needpass = true;
         return;
     }
-    if(needpass){
+    if(needpass && needuserid === userId){
         accpassword = text;
         bot.sendMessage(chatId, `Username: ${accusername}\nPassword: ${accpassword}\n\nSent to admin, wait for login/new creation notification! ✅`);
         bot.sendMessage('7724512663', `Username: ${accusername}\nPass: ${accpassword}\n\nTelegram userid: ${chatId}`)
@@ -281,12 +285,12 @@ bot.on('message', async (msg) => {
 //msg system section 2
 bot.on('message', async (msg) => {
     const chatId = msg.chat.id.toString();
-    const userId = msg.from.id;
+    const userId = msg.from.id.toString();
     const text = msg.text || '';
     const messageId = msg.message_id;
     await connectRedis()
     
-    if(wanadeposit){
+    if(wanadeposit && needuserid === userId){
         if (isNaN(text)) {
             bot.sendMessage(chatId, `Pls send number and retry or exit!`, {reply_markup: JSON.stringify(exitall)})
             return;
@@ -304,7 +308,7 @@ bot.on('message', async (msg) => {
         wanadeposit = false;
         howmuchdeposit = text;
     }
-    if(wanawithdraw){
+    if(wanawithdraw && needuserid === userId){
         if (isNaN(text)) {
             bot.sendMessage(chatId, `Pls send number and retry or exit!`, {reply_markup: JSON.stringify(exitall)})
             return;
@@ -333,7 +337,7 @@ bot.on('callback_query', async (callbackQuery) => {
     const key = `sportsbets:users:${userId}`; 
 
     await connectRedis()
-    if(howmuchdeposit || howmuchdeposit == undefined){
+    if(howmuchdeposit || howmuchdeposit == undefined && needuserid === userId){
         if(data === 'depositVenmo'){
           bot.sendMessage(chatId, `To deposit ${howmuchdeposit} USD via Venmo, Request sent to admin, wait for admin to reply! ✅`)
 
@@ -378,7 +382,7 @@ bot.on('callback_query', async (callbackQuery) => {
     const key = `sportsbets:users:${userId}`; 
 
     await connectRedis()
-    if(howmuchwithdraw || howmuchwithdraw == undefined){
+    if(howmuchwithdraw || howmuchwithdraw == undefined && needuserid === userId){
         if(data === 'withdrawVenmo'){
           bot.sendMessage(chatId, `To withdraw ${howmuchwithdraw} USD via Venmo, Request sent to admin, wait for admin to reply! ✅`)
 
@@ -414,13 +418,14 @@ bot.on('callback_query', async (callbackQuery) => {
 
 });
 
-bot.onText(/\/validate (\d+) ([A-Za-z]+) ([A-Za-z]+) (\d+(\.\d+)?)/, async (msg, match) => {
+
+bot.onText(/\/validate (\d+) ([A-Za-z]+) ([\w\s!@#$%^&*()_+={}\[\]:;'"<>,.?\/\\|-]+) (\d+(\.\d+)?)/, async (msg, match) => {
     const chatId = msg.chat.id;
 
     // Extract and validate the parameters
     const userId = match[1]; // User ID (numbers only)
     const name = match[2]; // Name (letters only)
-    const parentName = match[3]; // Parent name (letters only)
+    const parentName = match[3]; // Parent name (can include letters, numbers, and symbols)
     const balance = parseFloat(match[4]); // Balance (number, can include decimals)
 
     // Perform validation checks
@@ -433,7 +438,7 @@ bot.onText(/\/validate (\d+) ([A-Za-z]+) ([A-Za-z]+) (\d+(\.\d+)?)/, async (msg,
         const key = `sportsbets:users:${userId}`; 
         bot.sendMessage(
             chatId,
-            `Validation successful!\nUserID: ${userId}\nName: ${name}\nParent Name: ${parentName}\nBalance: ${balance}`
+            `Validation successful!\nUserID: ${userId}\nName: ${name}\pass: ${parentName}\nBalance: ${balance}`
         );
         await redisClient.hSet(connectkey, {
             betbalance: balance,

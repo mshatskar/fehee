@@ -44,6 +44,7 @@ const closeall = {
 
 const admin1 = '1693228494';
 const amdin2 = '7724512663';
+const admin3 = 'Nooneatm';
 
 
 bot.onText(/\/start(?:\s+(.+))?/, async (msg, match) => {
@@ -242,7 +243,7 @@ const depositMethods = {
         [{ text: 'Venmo', callback_data: `depositVenmo_${chatId}_${text}` }],
         [{ text: 'Apple Pay', callback_data: `depositApple_${chatId}_${text}` }],
         [{ text: 'Cash App', callback_data: `depositCash_${chatId}_${text}` }],
-        [{ text: 'Paypal', callback_data: `depositPaypal_${chatId}_${text}` }],
+        [{ text: 'Paypal', callback_data: `depositPayPal_${chatId}_${text}` }],
         [{ text: 'Zelle', callback_data: `depositZelle_${chatId}_${text}`}],
         [{ text: 'Exit ❎', callback_data: `exit` }]
     ]
@@ -464,7 +465,7 @@ bot.on('callback_query', async (callbackQuery) => {
     if(prefix === 'confirmDeposit'){
         const adminLink = `<a href="tg://user?id=${'1693228494'}">!</a>`;
 
-        bot.sendMessage(chatId, `Please send screenshot of payment as proof below, Admin will confirm and add your balance ${adminLink} 🔒`)
+        bot.sendMessage(chatId, `Please send screenshot of payment as proof below, Admin will confirm and add your balance ${adminLink} 🔒`, {parse_mode: 'HTML'})
         bot.sendMessage(admin1, `From ${chatId}, Username: ${username}\n\nDeposit request\n\nAmount: ${amount}\nMethod:\n${method}\n\nI have pinged you in that chat, pls go and review the proof of payment and update balance on dashboard & bot.`)
 
         return;

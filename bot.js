@@ -465,7 +465,7 @@ bot.on('callback_query', async (callbackQuery) => {
         const adminLink = `<a href="tg://user?id=${'1693228494'}">!</a>`;
 
         bot.sendMessage(chatId, `Please send screenshot of payment as proof below, Admin will confirm and add your balance ${adminLink} 🔒`)
-        bot.sendMessage(chatId, `From ${chatId}, Username: ${username}\n\nDeposit request\n\nAmount: ${amount}\nMethod:\n${method}\n\nI have pinged you in that chat, pls go and review the proof of payment and update balance on dashboard & bot.`)
+        bot.sendMessage(admin1, `From ${chatId}, Username: ${username}\n\nDeposit request\n\nAmount: ${amount}\nMethod:\n${method}\n\nI have pinged you in that chat, pls go and review the proof of payment and update balance on dashboard & bot.`)
 
         return;
     }

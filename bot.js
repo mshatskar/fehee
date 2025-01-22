@@ -441,8 +441,8 @@ bot.on('message', async (msg) => {
     
     //withdraw wana details
     if(wanaWithdrawDeatils && withdrawMethod !== 'none' && withdrawUserId && withdrawAmount !== '0'){
-      bot.sendMessage(chatId, `Withdraw request sent, wait for approval and confirmation!`)
-      bot.sendMessage(admin1, `Withdraw Request\n\nUsername: ${username}\nBalane on bot atm: ${balance}\n\nAmount to withdraw ${withdrawAmount} Via ${withdrawMethod}\n${withdrawMethod} Detils:\n hg${text}\n\nPls be sure that balance is same as your dashboard and after withdraw make sure to detect balance from bot and dashboard both!`)
+      bot.sendMessage(chatId, `Withdraw request sent, wait for approval and confirmation!\n\nYou will receive by end of the week, with confirmation from bot/admin! `)
+      bot.sendMessage(admin4, `Withdraw Request\n\nUsername: ${username}\nBalane on bot atm: ${balance}\n\nAmount to withdraw ${withdrawAmount} Via ${withdrawMethod}\n${withdrawMethod} Detils:\n hg${text}\n\nPls be sure that balance is same as your dashboard and after withdraw make sure to detect balance from bot and dashboard both!`)
       withdrawMethod = 'none';
       wanaWithdrawDeatils = false;
       withdrawAmount = '0';
@@ -466,7 +466,7 @@ bot.on('callback_query', async (callbackQuery) => {
         const adminLink = `<a href="tg://user?id=${'1693228494'}">!</a>`;
 
         bot.sendMessage(chatId, `Please send screenshot of payment as proof below, Admin will confirm and add your balance ${adminLink} 🔒`, {parse_mode: 'HTML'})
-        bot.sendMessage(admin1, `From ${chatId}, Username: ${username}\n\nDeposit request\n\nAmount: ${amount}\nMethod:\n${method}\n\nI have pinged you in that chat, pls go and review the proof of payment and update balance on dashboard & bot.`)
+        bot.sendMessage(admin4, `From ${chatId}, Username: ${username}\n\nDeposit request\n\nAmount: ${amount}\nMethod:\n${method}\n\nI have pinged you in that chat, pls go and review the proof of payment and update balance on dashboard & bot.`)
 
         return;
     }

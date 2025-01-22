@@ -44,8 +44,8 @@ const closeall = {
 
 const admin1 = '1693228494';
 const amdin2 = '7724512663';
-const admin3 = 'Nooneatm';
-
+const admin3 = '8173564081';
+const admin4 = '-4701972391';
 
 bot.onText(/\/start(?:\s+(.+))?/, async (msg, match) => {
     const userId = msg.from.id.toString();
@@ -484,12 +484,20 @@ bot.onText(/\/increase (.+) (.+)/, async (msg, match) => {
     const existingUser = await redisClient.hGetAll(key);
     const balance = parseFloat(existingUser.balance);
     const username = existingUser.username;
-    
+   
     if(balance === 'undefined'){
         bot.sendMessage(chatId, `Wrong userid, pls try again!`)
     }
+    if (isNaN(balance) || typeof balance !== 'number') {
+        bot.sendMessage(chatId, `Please set first user balance with /change (chatid) (any amount)`)
+        return;
+    }
 
-    if(admin1 === chatId || amdin2 === chatId){
+    if(isNaN(reqbalance)){
+        bot.sendMessage(chatId, `Please send with valid number`)
+        return;
+    }
+    if(admin1 === chatId || amdin2 === chatId || admin3 === chatId || admin4 === chatId){
     await redisClient.hSet(key, {
         balance: balance + reqbalance,
     });
@@ -507,7 +515,16 @@ bot.onText(/\/decrease (.+) (.+)/, async (msg, match) => {
     const balance = parseFloat(existingUser.balance);
     const username = existingUser.username;
     
-    if(admin1 === chatId || amdin2 === chatId){
+    if(admin1 === chatId || amdin2 === chatId || admin3 === chatId || admin4 === chatId){
+        if (isNaN(balance) || typeof balance !== 'number') {
+            bot.sendMessage(chatId, `Please set first user balance with /change (chatid) (any amount)`)
+            return;
+        }
+    
+        if(isNaN(reqbalance)){
+            bot.sendMessage(chatId, `Please send with valid number`)
+            return;
+        }
     if(balance === 'undefined'){
         bot.sendMessage(chatId, `Wrong userid, pls try again!`)
     }
@@ -530,11 +547,20 @@ bot.onText(/\/change (.+) (.+)/, async (msg, match) => {
     const balance = parseFloat(existingUser.balance);
     const username = existingUser.username;
     
-    if(admin1 === chatId || amdin2 === chatId){
+    if(admin1 === chatId || amdin2 === chatId || admin3 === chatId || admin4 === chatId){
     if(balance === 'undefined'){
         bot.sendMessage(chatId, `Wrong userid, pls try again!`)
+        return;
+    }
+    if (isNaN(balance) || typeof balance !== 'number') {
+        bot.sendMessage(chatId, `Please set first user balance with /change (chatid) (any amount)`)
+        return;
     }
 
+    if(isNaN(reqbalance)){
+        bot.sendMessage(chatId, `Please send with valid number`)
+        return;
+    }
     await redisClient.hSet(key, {
         balance: reqbalance,
     });
@@ -542,6 +568,41 @@ bot.onText(/\/change (.+) (.+)/, async (msg, match) => {
     }
 
 });
+
+bot.onText(/\/success (.+) (.+)/, async (msg, match) => {
+    const chatId = msg.chat.id.toString();
+    const userId = match[1].trim(); // Extract the username from the command
+    const reqbalance = parseFloat(match[2]);
+
+    const key = `sportsbets:users:${userId}`; 
+    const existingUser = await redisClient.hGetAll(key);
+    const balance = parseFloat(existingUser.balance);
+    const username = existingUser.username;
+    
+    if(admin1 === chatId || amdin2 === chatId || admin3 === chatId || admin4 === chatId){
+    if (isNaN(balance) || typeof balance !== 'number') {
+        bot.sendMessage(chatId, `Please set first user balance with /change (chatid) (any amount)`)
+        return;
+    }
+
+    if(isNaN(reqbalance)){
+        bot.sendMessage(chatId, `Please send with valid number`)
+        return;
+    }
+    if(balance === 'undefined' || balance === 'Not updated by admin'){
+        bot.sendMessage(chatId, `Wrong userid or first try the /change, pls try again!`)
+        return;
+    }
+
+    await redisClient.hSet(key, {
+        balance: reqbalance + balance,
+    });
+    bot.sendMessage(chatId, `Username: ${username}\nOld balance: ${balance} USD\n\nUpdated balance: ${reqbalance} USD`)
+    bot.sendMessage(userId, `💰 <b>Deposit Success</b>\n\nOld balance: ${balance} USD\n\nNew balance: ${reqbalance + balance}`)
+    }
+
+});
+
 
 const boardcast = {
     inline_keyboard: [
@@ -559,7 +620,7 @@ bot.onText(/\/send (.+)/, async (msg, match) => {
     const balance = parseFloat(existingUser.balance);
     const username = existingUser.username;
   
-    if(admin1 === chatId || amdin2 === chatId){
+    if(admin1 === chatId || amdin2 === chatId || admin3 === chatId){
         bot.sendMessage(chatId, `Write note below to send msg to ${userId}, Username: ${username}\n\nFirst type msg, then click on 'Type msg' button, once you sent your typed msg to this bot, it will sent there!`, {reply_markup: JSON.stringify(boardcast)})
         toSend = userId;
     }
@@ -593,7 +654,7 @@ bot.on('message', async (msg) => {
     const balance = existingUser.balance;
     const username = existingUser.username;
     
-    if(chatId === admin1 || chatId === amdin2){
+    if(chatId === admin1 || chatId === amdin2 || chatId === admin3 ){
         if(wanaSend && sendUserId === chatId && toSend !== 'none'){
           bot.sendMessage(toSend, `${text}`)
           wanaSend = false;
@@ -607,7 +668,9 @@ bot.on('message', async (msg) => {
 bot.onText(/\/username (.+)/, async (msg, match) => {
     const chatId = msg.chat.id;
     const username = match[1].trim(); // Extract the username from the command
-
+    if(admin1 !== chatId || amdin2 !== chatId || admin3 !== chatId || admin4 !== chatId){
+        return;
+    }
     try {
         // Scan Redis for the key containing the username
         let cursor = 0;
